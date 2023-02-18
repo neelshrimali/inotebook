@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { json } from "react-router-dom";
 import NoteContext from "./noteContext";
 
 const NoteState = (prop) => {
@@ -17,10 +16,10 @@ const NoteState = (prop) => {
         "Content-Type": "application/json",
         "auth-token":
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNlOGVmNDM5N2FjZTEzMjdhNjZmZGY2In0sImlhdCI6MTY3NjM3MDk3NX0.jJMsOBbcCRfzOOT8Jley_wDXRgEa-VtKOcsnmE2U2cM",
-      }
+      },
     });
-    const json = await response.json()
-    setNotes(json)
+    const json = await response.json();
+    setNotes(json);
   };
   //Add a  note
   const addNote = async (title, description, tag) => {
@@ -35,6 +34,7 @@ const NoteState = (prop) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
+    const json = await response.json();    
 
     const note = {
       _id: "63eb8114f15c7d86f364e2a0asd21s",
@@ -48,7 +48,17 @@ const NoteState = (prop) => {
     setNotes(notes.concat(note));
   };
   //Delete a note
-  const deleteNote = (id) => {
+  const deleteNote = async (id) => {
+    const url = `${host}/api/notes/deletenote/${id}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token":
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNlOGVmNDM5N2FjZTEzMjdhNjZmZGY2In0sImlhdCI6MTY3NjM3MDk3NX0.jJMsOBbcCRfzOOT8Jley_wDXRgEa-VtKOcsnmE2U2cM",
+      },
+    });
+    const json = response.json();
     const newnotes = notes.filter((note) => {
       return note._id !== id;
     });
@@ -59,7 +69,7 @@ const NoteState = (prop) => {
     //api call
     const url = `${host}/api/notes/updatenote/${id}`;
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "auth-token":
@@ -67,18 +77,20 @@ const NoteState = (prop) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-
+    const json = await response.json();
+    console.log(json);
+    let newnotes = JSON.parse(JSON.stringify(notes));
     //logic to edit in client
     for (let index = 0; index < notes.length; index++) {
-      const element = notes[index];
+      const element = newnotes[index];
       if (element._id === id) {
-        element.title = title;
-        element.description = description;
-        element.tag = tag;
-      }
+        newnotes[index].title = title;
+        newnotes[index].description = description;
+        newnotes[index].tag = tag;
+        break;
+      }      
     }
-
-    const json = response.json();
+    setNotes(newnotes);
   };
 
   return (
