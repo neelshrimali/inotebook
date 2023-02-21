@@ -3,7 +3,7 @@ const About = () => {
   
   return (
     <div>
-      {/* This is {a.state.name} and he is in class {a.state.class}. */}
+      i am about comp.
     </div>
   )
 }
