@@ -5,10 +5,11 @@ const AddNote = () => {
   const context = useContext(noteContext);
   const { addNote } = context;
 
-  const [note, setNote] = useState({ title: "", description: "", tag: "asd" });
+  const [note, setNote] = useState({ title: "", description: "", tag: "" });
   const handleClick = (e) => {
     e.preventDefault(); 
     addNote(note.title, note.description, note.tag);
+    setNote({ title: "", description: "", tag: "" })
   };
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value});
@@ -23,9 +24,8 @@ const AddNote = () => {
             type="text"
             className="form-control"
             id="title"
-            name="title"
-            placeholder="title"
-            onChange={onChange}
+            name="title" value={note.title} 
+            onChange={onChange} minLength={5} required
           />
         </div>
         <div className="mb-3">
@@ -34,8 +34,8 @@ const AddNote = () => {
             type="text"
             className="form-control"
             id="description"
-            name="description"
-            onChange={onChange}
+            name="description" value={note.description}
+            onChange={onChange} minLength={5} required
           ></input>
         </div>
         <div className="mb-3">
@@ -44,12 +44,13 @@ const AddNote = () => {
             type="text"
             className="form-control"
             id="tag"
-            name="tag"
+            name="tag" value={note.tag}
             onChange={onChange}
           ></input>
         </div>
         <div className="col-auto">
           <button
+            disabled={note.title.length <5 || note.description.length < 5 }
             type="submit"
             className="btn btn-primary mb-3"
             onClick={handleClick}
